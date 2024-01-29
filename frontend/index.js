@@ -25,12 +25,12 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
     fullLearners.forEach(learner => {
       const learnerCard = document.createElement('div');
       const h3Name = document.createElement('h3');
-      const emailP = document.createElement('p');
+      const emailDiv = document.createElement('div');
       const h4MentorsDropDown = document.createElement("h4");
       const ulMentorNames = document.createElement("ul");
 
       h3Name.textContent = `${learner.fullName}`;
-      emailP.textContent = `${learner.email}`;
+      emailDiv.textContent = `${learner.email}`;
       h4MentorsDropDown.textContent = `Mentors`
       h4MentorsDropDown.classList.add("closed")
 
@@ -77,7 +77,7 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
       })
 
       learnerCard.appendChild(h3Name)
-      learnerCard.appendChild(emailP)
+      learnerCard.appendChild(emailDiv)
       learnerCard.appendChild(h4MentorsDropDown)
       learnerCard.appendChild(ulMentorNames)
       entryPoint.appendChild(learnerCard)
