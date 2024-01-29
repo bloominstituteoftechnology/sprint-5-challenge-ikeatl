@@ -5,19 +5,23 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
   const currentYear = new Date().getFullYear()
   footer.textContent = `© BLOOM INSTITUTE OF TECHNOLOGY ${currentYear}`
 
-  const learners = await getLearner()
-  const mentors = await getMentor();
-
-  setTimeout(() => {
-    learnerCardMaker()
-  }, 500);
+  async function fetchData() {
+    try {
+      const learners = await getLearner();
+      const mentors = await getMentor();
+      learnerCardMaker(learners, mentors);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 
   const entryPoint = document.querySelector('.cards');
   const info = document.querySelector(".info");
 
-  function learnerCardMaker() {
-    const fullLearners = learners.map(replaceMentorIdsWithNames);
-    // not sure what to insert into my funtion yet. Will come back and figure it out
+  function learnerCardMaker(learners, mentors) {
+    const fullLearners = learners.map(learner => replaceMentorIdsWithNames(learner, mentors));
+
+
     fullLearners.forEach(learner => {
       const learnerCard = document.createElement('div');
       const h3Name = document.createElement('h3');
@@ -48,9 +52,9 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
         h4MentorsDropDown.classList.toggle('closed', isOpen)
 
         if (isOpen) {
-          ulMentorNames.classList.remove('.card h4.closed~ul')
+          ulMentorNames.style.display = "none";
         } else {
-          ulMentorNames.classList.add('.card h4.closed~ul')
+          ulMentorNames.style.display = "block";
         }
       })
 
@@ -86,16 +90,13 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
   }
 
   async function getLearner() {
-    const response = await axios.get(`http://localhost:3003/api/learners`)
-      .then(res => {
-        console.log(res.data)
-        return res.data
-      })
-      .catch(err => {
-        console.error(err)
-      })
-
-    return response
+    try {
+      const response = await axios.get(`http://localhost:3003/api/learners`)
+      return response.data
+    } catch (error) {
+      console.error(error.message);
+      throw error;
+    }
   }
 
   async function getMentor() {
@@ -110,9 +111,8 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
     return response
   }
 
-  function replaceMentorIdsWithNames(learner) {
+  function replaceMentorIdsWithNames(learner, mentors) {
     const updatedMentors = learner.mentors.map(learnerMentorId => {
-      // console.log("mentors:", mentors);
       const mentor = mentors.find(m => m.id === learnerMentorId);
       if (mentor) {
         return `${mentor.firstName} ${mentor.lastName}`;
@@ -121,6 +121,7 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
 
     return { ...learner, mentors: updatedMentors };
   }
+  fetchData();
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
 
